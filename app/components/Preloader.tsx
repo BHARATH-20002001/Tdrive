@@ -1,58 +1,105 @@
 "use client";
 
 import { useEffect, useState, useRef } from "react";
-import { usePathname, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { gsap } from "gsap";
+import { useRouter } from "next/navigation";
 
 export default function Preloader() {
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-
   const [isLoading, setIsLoading] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
+  const isInitialLoad = useRef(true);
+  const router = useRouter();
 
   useEffect(() => {
-    // Reset state on path change
-    setIsLoading(true);
+    if (isInitialLoad.current) {
+      isInitialLoad.current = false;
 
-    // We need to wait for the DOM to render the loading screen before animating
-    // Using a timeout of 0 ensures it runs in the next tick
-    const timer = setTimeout(() => {
+      // We need to wait for the DOM to render the loading screen before animating
+      // Using a timeout of 0 ensures it runs in the next tick
+      const timer = setTimeout(() => {
+        if (!containerRef.current) return;
+
+        const ctx = gsap.context(() => {
+          const tl = gsap.timeline({
+            onComplete: () => {
+              setIsLoading(false);
+            }
+          });
+
+          // Initial setup for the preloader
+          gsap.set(containerRef.current, { yPercent: 0, display: "block" });
+
+          // Fade in logo
+          tl.fromTo(".preloader-logo",
+            { autoAlpha: 0, y: 20 },
+            { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }
+          )
+            // Fade out logo
+            .to(".preloader-logo",
+              { autoAlpha: 0, duration: 0.4, ease: "power2.inOut", delay: 0.6 }
+            )
+            // Slide background up to reveal page
+            .to(containerRef.current,
+              { yPercent: -100, duration: 0.8, ease: "power3.inOut" }
+            );
+        }, containerRef);
+
+        return () => ctx.revert();
+      }, 0);
+
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
+  useEffect(() => {
+    const handleTransition = (e: Event) => {
+      const customEvent = e as CustomEvent<string>;
+      const targetUrl = customEvent.detail;
+      
       if (!containerRef.current) return;
+      
+      setIsLoading(true);
 
-      const ctx = gsap.context(() => {
+      gsap.context(() => {
         const tl = gsap.timeline({
           onComplete: () => {
             setIsLoading(false);
           }
         });
 
-        // Slide up the background
+        // Slide up the background from the bottom to cover the screen
         tl.fromTo(containerRef.current,
           { yPercent: 100, display: "block" },
-          { yPercent: 0, duration: 0.8, ease: "power3.inOut" }
+          { 
+            yPercent: 0, 
+            duration: 0.6, 
+            ease: "power3.inOut",
+            onComplete: () => {
+              // Trigger the Next.js routing right after the screen is fully covered
+              router.push(targetUrl);
+            }
+          }
         )
-          // Fade in logo
+          // Briefly fade in logo
           .fromTo(".preloader-logo",
             { autoAlpha: 0, y: 20 },
-            { autoAlpha: 1, y: 0, duration: 0.6, ease: "power2.out" }
+            { autoAlpha: 1, y: 0, duration: 0.4, ease: "power2.out" }
           )
           // Fade out logo
           .to(".preloader-logo",
-            { autoAlpha: 0, duration: 0.4, ease: "power2.inOut", delay: 0.6 }
+            { autoAlpha: 0, duration: 0.3, ease: "power2.inOut", delay: 0.2 }
           )
-          // Slide background up to reveal page
+          // Slide background up to reveal the new page
           .to(containerRef.current,
             { yPercent: -100, duration: 0.8, ease: "power3.inOut" }
           );
       }, containerRef);
+    };
 
-      return () => ctx.revert();
-    }, 0);
-
-    return () => clearTimeout(timer);
-  }, [pathname, searchParams]);
+    window.addEventListener("trigger-transition", handleTransition);
+    return () => window.removeEventListener("trigger-transition", handleTransition);
+  }, [router]);
 
   // We keep it in the DOM but hidden when not loading so GSAP can reset it properly on next load
   return (

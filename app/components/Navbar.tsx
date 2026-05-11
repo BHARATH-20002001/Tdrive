@@ -38,6 +38,13 @@ export default function Navbar() {
     }
   }, [isOpen]);
 
+  const handleTransition = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    if (window.location.pathname === href) return;
+    setIsOpen(false);
+    window.dispatchEvent(new CustomEvent("trigger-transition", { detail: href }));
+  };
+
   return (
     <nav className="w-full bg-black sticky top-0 z-50 border-b border-gray-900" ref={containerRef}>
       <div className="w-full px-[20px] lg:px-[60px]">
@@ -45,7 +52,7 @@ export default function Navbar() {
           
           {/* Left side: Logo */}
           <div className="flex-shrink-0 z-20">
-            <Link href="/">
+            <Link href="/" onClick={(e) => handleTransition(e, "/")}>
               <Image
                 src="/tdrive-logo-black.svg"
                 alt="tdrive Logo"
@@ -65,18 +72,21 @@ export default function Navbar() {
               <div className="nav-container flex items-center invisible pointer-events-auto">
                 <Link
                   href="/"
+                  onClick={(e) => handleTransition(e, "/")}
                   className="nav-item bg-[#D9D9D9] border-y border-l border-gray-400 border-r-[0.5px] text-gray-900 hover:text-black px-5 py-2.5 text-sm font-medium transition-colors whitespace-nowrap rounded-l-md"
                 >
                   Home
                 </Link>
                 <Link
                   href="/about"
+                  onClick={(e) => handleTransition(e, "/about")}
                   className="nav-item bg-[#D9D9D9] border-y border-gray-400 border-l-[0.5px] border-r-[0.5px] text-gray-900 hover:text-black px-5 py-2.5 text-sm font-medium transition-colors whitespace-nowrap"
                 >
                   About
                 </Link>
                 <Link
                   href="/services"
+                  onClick={(e) => handleTransition(e, "/services")}
                   className="nav-item bg-[#D9D9D9] border-y border-gray-400 border-l-[0.5px] text-gray-900 hover:text-black px-5 py-2.5 text-sm font-medium transition-colors whitespace-nowrap"
                 >
                   Services
