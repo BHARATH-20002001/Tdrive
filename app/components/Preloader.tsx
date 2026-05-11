@@ -107,14 +107,14 @@ export default function Preloader() {
       ref={containerRef}
       className={`fixed inset-0 z-[100] bg-[#0A0A0B] ${!isLoading ? 'hidden' : ''}`}
     >
-      <div className="absolute bottom-10 left-10 w-[50%] preloader-logo opacity-0">
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 md:left-10 md:-translate-x-0 w-[50%] md:w-[40%] preloader-logo opacity-0 flex justify-center md:justify-start">
         <Image
           src="/tdrive-logo-black.svg"
           alt="tdrive Logo"
-          width={500}
-          height={150}
+          width={400}
+          height={120}
           priority
-          className="invert w-full h-auto object-contain object-left-bottom"
+          className="invert w-full h-auto max-w-[200px] md:max-w-none object-contain object-bottom md:object-left-bottom"
         />
       </div>
     </div>
