@@ -1,8 +1,15 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Space_Grotesk } from "next/font/google";
+import localFont from "next/font/local";
 import Navbar from "./components/Navbar";
 import Preloader from "./components/Preloader";
 import "./globals.css";
+
+const staffWide = localFont({
+  src: "./fonts/Staff Wide Test SemiBold.woff2",
+  variable: "--font-staff-wide",
+  weight: "600",
+});
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,7 +39,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${spaceGrotesk.variable} ${staffWide.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-gray-950 text-white">
         <Preloader />

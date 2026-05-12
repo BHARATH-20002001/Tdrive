@@ -25,7 +25,7 @@ export default function Home() {
       ref={containerRef}
       className="flex min-h-screen flex-col items-center justify-center bg-gray-950 p-24"
     >
-      <h1 className="text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400 mb-12">
+      <h1 className="text-5xl font-staff font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400 mb-12">
         Welcome to Tdrive
       </h1>
 

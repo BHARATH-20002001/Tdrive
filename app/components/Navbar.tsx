@@ -40,7 +40,7 @@ export default function Navbar() {
 
   // Handle body scroll locking for mobile menu
   useEffect(() => {
-    if (isOpen && window.innerWidth < 768) {
+    if (isOpen && window.innerWidth < 1024) {
       document.body.style.overflow = "hidden";
     } else {
       document.body.style.overflow = "";
@@ -57,19 +57,19 @@ export default function Navbar() {
     window.dispatchEvent(new CustomEvent("trigger-transition", { detail: href }));
   };
 
-  const mobileNavItems = [
-    { num: "01", label: "PORTFOLIO", href: "/portfolio" },
-    { num: "02", label: "STORY", href: "/story" },
-    { num: "03", label: "TEAM", href: "/team" },
-    { num: "04", label: "CAREERS", href: "/careers" },
-    { num: "05", label: "TALENT", href: "/talent" },
-    { num: "06", label: "SEED PROGRAM", href: "/seed-program" },
+  const navItems = [
+    { num: "01", label: "Portfolio", href: "/portfolio" },
+    { num: "02", label: "Story", href: "/story" },
+    { num: "03", label: "Team", href: "/team" },
+    { num: "04", label: "Careers", href: "/careers" },
+    { num: "05", label: "Talent", href: "/talent" },
+    { num: "06", label: "Seed Program", href: "/seed-program" },
   ];
 
   return (
     <>
       <nav className="w-full bg-black sticky top-0 z-50 border-b border-gray-900 font-[family-name:var(--font-space-grotesk)]" ref={containerRef}>
-        <div className="w-full px-[20px] lg:px-[60px]">
+        <div className="w-full px-[20px] lg:px-[40px]">
           <div className="flex items-center justify-between h-20 relative">
             
             {/* Left side: Logo */}
@@ -90,29 +90,28 @@ export default function Navbar() {
             <div className="flex items-center relative justify-end">
               
               {/* Wrapper to clip the sliding menu so it doesn't show to the right of the button */}
-              <div className="hidden md:flex absolute right-10 h-full items-center overflow-hidden z-10 pointer-events-none">
+              <div className="hidden lg:flex absolute right-10 h-full items-center overflow-hidden z-10 pointer-events-none">
                 <div className="nav-container flex items-center invisible pointer-events-auto">
-                  <Link
-                    href="/"
-                    onClick={(e) => handleTransition(e, "/")}
-                    className="nav-item bg-[#f1f0ea] border-y border-l border-gray-400 border-r-[0.5px] text-gray-900 hover:text-black px-5 py-2.5 text-sm font-medium transition-colors whitespace-nowrap rounded-l-md"
-                  >
-                    Home
-                  </Link>
-                  <Link
-                    href="/about"
-                    onClick={(e) => handleTransition(e, "/about")}
-                    className="nav-item bg-[#f1f0ea] border-y border-gray-400 border-l-[0.5px] border-r-[0.5px] text-gray-900 hover:text-black px-5 py-2.5 text-sm font-medium transition-colors whitespace-nowrap"
-                  >
-                    About
-                  </Link>
-                  <Link
-                    href="/services"
-                    onClick={(e) => handleTransition(e, "/services")}
-                    className="nav-item bg-[#f1f0ea] border-y border-gray-400 border-l-[0.5px] text-gray-900 hover:text-black px-5 py-2.5 text-sm font-medium transition-colors whitespace-nowrap"
-                  >
-                    Services
-                  </Link>
+                  {navItems.map((item, index) => {
+                    let borderClasses = "";
+                    if (index === 0) {
+                      borderClasses = "border-l border-r-[0.5px] rounded-l-md";
+                    } else if (index === navItems.length - 1) {
+                      borderClasses = "border-l-[0.5px]";
+                    } else {
+                      borderClasses = "border-l-[0.5px] border-r-[0.5px]";
+                    }
+                    return (
+                      <Link
+                        key={item.num}
+                        href={item.href}
+                        onClick={(e) => handleTransition(e, item.href)}
+                        className={`nav-item bg-[#f1f0ea] border-y border-gray-400 text-gray-900 hover:text-black px-5 py-2.5 text-[18px] uppercase font-normal font-[family-name:var(--font-space-grotesk)] transition-colors whitespace-nowrap ${borderClasses}`}
+                      >
+                        {item.label}
+                      </Link>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -122,18 +121,11 @@ export default function Navbar() {
                 className="bg-[#f1f0ea] border border-gray-400 flex items-center justify-center w-10 h-10 hover:bg-[#e4e3dd] transition-colors z-20 relative shadow-lg text-gray-900"
                 aria-label="Toggle Menu"
               >
-                {isOpen ? (
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18"></line>
-                    <line x1="6" y1="6" x2="18" y2="18"></line>
-                  </svg>
-                ) : (
-                  <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="4" y1="7" x2="20" y2="7"></line>
-                    <line x1="4" y1="12" x2="20" y2="12"></line>
-                    <line x1="4" y1="17" x2="20" y2="17"></line>
-                  </svg>
-                )}
+                <div className="relative w-5 h-5 flex justify-center items-center">
+                  <span className={`absolute h-[1.5px] w-5 bg-current transform transition-all duration-300 ease-in-out ${isOpen ? 'rotate-45' : '-translate-y-[5px]'}`}></span>
+                  <span className={`absolute h-[1.5px] w-5 bg-current transform transition-all duration-300 ease-in-out ${isOpen ? 'opacity-0' : 'opacity-100'}`}></span>
+                  <span className={`absolute h-[1.5px] w-5 bg-current transform transition-all duration-300 ease-in-out ${isOpen ? '-rotate-45' : 'translate-y-[5px]'}`}></span>
+                </div>
               </button>
               
             </div>
@@ -144,7 +136,7 @@ export default function Navbar() {
 
       {/* Mobile Slide-down Menu */}
       <div
-        className={`fixed inset-0 bg-[#0a0a0a] z-40 flex flex-col items-center md:hidden transform transition-transform duration-500 ease-[cubic-bezier(0.85,0,0.15,1)] font-[family-name:var(--font-space-grotesk)] ${
+        className={`fixed inset-0 bg-[#0a0a0a] z-40 flex flex-col items-center lg:hidden transform transition-transform duration-500 ease-[cubic-bezier(0.85,0,0.15,1)] font-[family-name:var(--font-space-grotesk)] ${
           isOpen ? "translate-y-0" : "-translate-y-full"
         }`}
         style={{
@@ -154,7 +146,7 @@ export default function Navbar() {
       >
         {/* Nav Items */}
         <div className="flex flex-col items-center justify-center w-full px-6 flex-1 pt-24 pb-8 space-y-6 sm:space-y-8 overflow-y-auto">
-          {mobileNavItems.map((item) => (
+          {navItems.map((item) => (
             <Link
               key={item.num}
               href={item.href}
@@ -162,7 +154,7 @@ export default function Navbar() {
               className="group flex flex-col items-center cursor-pointer"
             >
               <span className="text-white/70 text-xs sm:text-sm font-medium tracking-widest mb-1">{item.num}</span>
-              <span className="text-white font-black text-[2rem] sm:text-5xl leading-none uppercase tracking-tight group-hover:text-gray-300 transition-colors">
+              <span className="text-white font-bold text-[24px] uppercase font-[family-name:var(--font-space-grotesk)] tracking-tight group-hover:text-gray-300 transition-colors">
                 {item.label}
               </span>
             </Link>
